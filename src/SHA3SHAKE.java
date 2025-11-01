@@ -115,11 +115,12 @@ public class SHA3SHAKE {
             digestSize = 0;
         } else if (suffix == 256) {
             // Ambiguous: could be SHA3-256 or SHAKE256
-            // Default to SHAKE256 since static SHA3() method handles SHA3-256 specially
+            // We defer the decision: if digest() is called -> SHA3-256, if squeeze() -> SHAKE256
+            // Set capacity/rate (same for both), but leave domain and size to be determined later
             capacity = 2 * suffix / 8;
             rate = 200 - capacity;
-            domainSuffix = 0x1F; // SHAKE domain separation
-            digestSize = 0; // Variable output for SHAKE
+            domainSuffix = (byte) 0xFF; // Sentinel value - will be set during finalization
+            digestSize = -1; // Sentinel value - will be determined by which method is called
         } else {
             throw new IllegalArgumentException("Invalid suffix: " + suffix);
         }
@@ -231,6 +232,12 @@ public class SHA3SHAKE {
             throw new IllegalStateException("Must call init() before squeeze()");
         }
 
+        // Handle ambiguous init(256) case - resolve to SHAKE256
+        if (digestSize == -1) {
+            domainSuffix = 0x1F; // SHAKE domain separation
+            digestSize = 0; // Variable output for SHAKE
+        }
+
         // Finalize absorption if not already done
         if (!finalized) {
             finalizeAbsorption();
@@ -280,6 +287,12 @@ public class SHA3SHAKE {
             throw new IllegalStateException("Must call init() before digest()");
         }
 
+        // Handle ambiguous init(256) case - resolve to SHA3-256
+        if (digestSize == -1) {
+            domainSuffix = 0x06; // SHA-3 domain separation
+            digestSize = 32; // 256 bits = 32 bytes
+        }
+
         if (digestSize == 0) {
             throw new IllegalStateException("digest() is only for SHA-3, not SHAKE. Use squeeze() instead.");
         }
@@ -316,6 +329,12 @@ public class SHA3SHAKE {
      * @return digest bytes
      */
     public byte[] digest() {
+        // Handle ambiguous init(256) case - resolve to SHA3-256
+        if (digestSize == -1) {
+            domainSuffix = 0x06; // SHA-3 domain separation
+            digestSize = 32; // 256 bits = 32 bytes
+        }
+
         if (digestSize == 0) {
             throw new IllegalStateException("digest() is only for SHA-3, not SHAKE. Use squeeze() instead.");
         }

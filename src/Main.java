@@ -209,11 +209,12 @@ public class Main {
         byte[] ciphertext = xor(plaintext, keystream);
 
         // 5. Compute MAC over ciphertext (BONUS)
-        // Per specification: Use SHA3-256 static method
-        byte[] macInput = new byte[key.length + ciphertext.length];
-        System.arraycopy(key, 0, macInput, 0, key.length);
-        System.arraycopy(ciphertext, 0, macInput, key.length, ciphertext.length);
-        byte[] mac = SHA3SHAKE.SHA3(256, macInput, null);
+        // Per specification: init SHA3-256, absorb(key), absorb(ciphertext), digest()
+        SHA3SHAKE sha3 = new SHA3SHAKE();
+        sha3.init(256);
+        sha3.absorb(key);
+        sha3.absorb(ciphertext);
+        byte[] mac = sha3.digest();
 
         // 6. Create cryptogram: nonce || ciphertext || MAC
         byte[] cryptogram = new byte[nonce.length + ciphertext.length + mac.length];
@@ -264,11 +265,12 @@ public class Main {
         byte[] key = SHA3SHAKE.SHAKE(128, passphraseBytes, 128, null); // Let method allocate
 
         // 5. Verify MAC (BONUS)
-        // Per specification: Use SHA3-256 static method
-        byte[] macInput = new byte[key.length + ciphertext.length];
-        System.arraycopy(key, 0, macInput, 0, key.length);
-        System.arraycopy(ciphertext, 0, macInput, key.length, ciphertext.length);
-        byte[] computedMAC = SHA3SHAKE.SHA3(256, macInput, null);
+        // Per specification: init SHA3-256, absorb(key), absorb(ciphertext), digest()
+        SHA3SHAKE sha3 = new SHA3SHAKE();
+        sha3.init(256);
+        sha3.absorb(key);
+        sha3.absorb(ciphertext);
+        byte[] computedMAC = sha3.digest();
 
         if (!constantTimeEquals(receivedMAC, computedMAC)) {
             throw new IOException("MAC verification failed: incorrect passphrase or corrupted cryptogram");
