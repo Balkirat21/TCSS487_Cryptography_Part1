@@ -149,7 +149,12 @@ The implementation consists of three primary classes:
 ### Compilation
 
 ```bash
-javac src/Main.java src/SHA3SHAKE.java
+javac src/*.java
+```
+
+Or explicitly:
+```bash
+javac src/Main.java src/SHA3SHAKE.java src/Edwards.java
 ```
 
 ### Command Syntax
@@ -521,7 +526,7 @@ java -cp src Main decverify sealed.bin recovered.txt "bob_secret" alice.pub
 
 ```bash
 # 1. Compile the project
-javac src/Main.java src/SHA3SHAKE.java
+javac src/*.java
 
 # 2. Create a test file
 echo "This is a secret message!" > plaintext.txt
