@@ -24,7 +24,8 @@ import java.security.SecureRandom;
  * - signenc <inputFile> <outputFile> <senderPassphrase> <recipientPublicKey>
  * - decverify <inputFile> <outputFile> <recipientPassphrase> <senderPublicKey>
  *
- * @author Student
+ * @author Balkirat Singh
+ * @author Jakita Kaur
  * @version 2.0
  */
 public class Main {

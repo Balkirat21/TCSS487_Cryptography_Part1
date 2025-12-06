@@ -10,7 +10,8 @@ import java.math.BigInteger;
  *
  * TCSS 487 Cryptography Project Part 2.
  *
- * @author Student
+ * @author Balkirat Singh
+ * @author Jakita Kaur
  * @version 2.0
  */
 public class Edwards {

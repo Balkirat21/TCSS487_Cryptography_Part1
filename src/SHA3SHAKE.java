@@ -10,7 +10,8 @@
  * - Each digest() call returns the same hash (unless re-initialized)
  * - Each squeeze() call continues the output stream
  *
- * @author Student
+ * @author Balkirat Singh
+ * @author Jakita Kaur
  * @version 1.0
  */
 public class SHA3SHAKE {
